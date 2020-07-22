@@ -108,23 +108,6 @@ export const addClass = (elem, className) => elem.classList.add(className);
 export const toggleClass = (elem, className) => { elem.classList.toggle(className); };
 
 /**
- * @deprecated Do not use, will get removed in future versions
- * @param {Element} elem
- * @param {string} className
- * @param {number} [timeoutMs]
- */
-export const transitionOut = function (elem, className, timeoutMs = 2000) {
-  const listener = function () {
-    clearTimeout(timer);
-    elem.removeEventListener('transitionend', listener);
-    removeElement(elem);
-  };
-  const timer = setTimeout(listener, timeoutMs);
-  elem.addEventListener('transitionend', listener);
-  addClass(elem, className);
-};
-
-/**
  * @param {ElementContainer} elem
  * @param {...Node} children
  */
