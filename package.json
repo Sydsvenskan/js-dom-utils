@@ -1,8 +1,8 @@
 {
   "name": "@hdsydsvenskan/dom-utils",
-  "version": "4.5.0",
+  "version": "0.0.0",
   "license": "MIT",
-  "description": "Our base DOM utils",
+  "description": "Basic small typed DOM helpers that aids in the creation of vanilla JS code",
   "author": "HD-Sydsvenskan (https://www.sydsvenskan.se/)",
   "homepage": "https://github.com/sydsvenskan/js-dom-utils",
   "repository": {
