@@ -2,13 +2,21 @@
 
 'use strict';
 
-/** @type {(str: string) => string} */
+/**
+ * @private
+ * @param {string} str
+ * @returns {string}
+ */
 const capitalize = (str) =>
   str
     ? str[0].toUpperCase() + str.slice(1)
     : '';
 
-/** @type {(str: string) => string} */
+/**
+ * @private
+ * @param {string} str
+ * @returns {string}
+ */
 const kebabToCamelCase = (str) =>
   (str || '')
     .split('-')
@@ -20,6 +28,8 @@ const kebabToCamelCase = (str) =>
 /** @typedef {Document|DocumentFragment|Element} ElementContainer */
 
 /**
+ * Mostly for internal use. Ensures that the node is of an element container type, mostly helps type validation
+ *
  * @param {Node} elem
  * @returns {ElementContainer|undefined}
  */
@@ -30,6 +40,8 @@ export const ensureElementContainer = function (elem) {
 };
 
 /**
+ * Mostly for internal use. Ensures that the node is an actual HTML element, mostly helps type validation
+ *
  * @template {Node} T
  * @param {T} elem
  * @returns {(T & HTMLElement)|undefined}
@@ -40,12 +52,17 @@ export const ensureHTMLElement = function (elem) {
 };
 
 /**
+ * Mostly for internal use. Ensures that a list of nodes only contains HTML elements, mostly helps type validation
+ *
  * @template {Node} T
  * @param {T[]} elems
  * @returns {(T & HTMLElement)[]}
  */
 export const ensureHTMLElements = (elems) => {
-  /** @type {(T & HTMLElement)[]} */
+  /**
+   * @private
+   * @type {(T & HTMLElement)[]}
+   */
   const purified = [];
 
   return elems.reduce((result, elem) => {
@@ -55,9 +72,11 @@ export const ensureHTMLElements = (elems) => {
 };
 
 /**
+ * Get an array of HTML elements that matches the specified selector
+ *
  * @template {string|Node[]|NodeListOf<Node>} T
  * @param {T} selector
- * @param {ElementContainer} [context]
+ * @param {ElementContainer} [context] If set, only looks up elements within the context container
  * @returns {import('./advanced-types').TypeOf$<T>[]}
  */
 export const $$ = function (selector, context) {
@@ -70,6 +89,10 @@ export const $$ = function (selector, context) {
 };
 
 /**
+ * Like {@link $$}, but returns only a single HTML element
+ *
+ * If one needs to match against the context container element itself, then use {@link elemByClass} instead
+ *
  * @template {string|Node} T
  * @param {T} selector
  * @param {ElementContainer} [context]
@@ -85,29 +108,49 @@ export const $ = function (selector, context) {
 };
 
 /**
- * @param {Element} tag
+ * Adds text nodes to the supplied element, persisting newlines by adding br elements for each newline
+ *
+ * @param {Element} elem
  * @param {string} text
  */
-export const addText = function (tag, text) {
+export const addText = function (elem, text) {
   String(text).split('\n').forEach(function (text, index) {
-    if (index !== 0) { createChild(tag, 'br'); }
-    appendChild(tag, document.createTextNode(text));
+    if (index !== 0) { createChild(elem, 'br'); }
+    appendChild(elem, document.createTextNode(text));
   });
 };
 
-/** @type {(elem: Element, className: string) => boolean} */
+/**
+ * @param {Element} elem
+ * @param {string} className
+ * @returns {boolean}
+ */
 export const hasClass = (elem, className) => elem.classList ? elem.classList.contains(className) : false;
 
-/** @type {(elem: Element, className: string) => void} */
+/**
+ * @param {Element} elem
+ * @param {string} className
+ * @returns {void}
+ */
 export const removeClass = (elem, className) => elem.classList.remove(className);
 
-/** @type {(elem: Element, className: string) => void} */
+/**
+ * @param {Element} elem
+ * @param {string} className
+ * @returns {void}
+ */
 export const addClass = (elem, className) => elem.classList.add(className);
 
-/** @type {(elem: Element, className: string) => void} */
+/**
+ * @param {Element} elem
+ * @param {string} className
+ * @returns {void}
+ */
 export const toggleClass = (elem, className) => { elem.classList.toggle(className); };
 
 /**
+ * Helper to append many children nodes at once
+ *
  * @param {ElementContainer} elem
  * @param {...Node} children
  */
@@ -117,11 +160,11 @@ export const appendChild = function (elem, ...children) {
   }
 };
 
-/** @typedef {{ [attributeName: string]: string }} AttributesList */
-
 /**
+ * Helper to easily set a collection of attributes
+ *
  * @param {Element} elem
- * @param {AttributesList} attributes
+ * @param {{ [attributeName: string]: string }} attributes
  */
 export const setAttributes = (elem, attributes) => {
   for (const attribute of Object.keys(attributes)) {
@@ -139,6 +182,8 @@ export const setAttributes = (elem, attributes) => {
 export const removeElement = (elem) => elem.remove ? elem.remove() : undefined;
 
 /**
+ * Iterates over all children in a container and removes them all
+ *
  * @param {ElementContainer} elem
  */
 export const emptyElement = function (elem) {
@@ -148,8 +193,10 @@ export const emptyElement = function (elem) {
 };
 
 /**
+ * Helper that makes one don't have to do kebab case conversion oneself
+ *
  * @param {HTMLElement} elem
- * @param {string} attribute kebabCase
+ * @param {string} attribute Should be in kebab case
  * @returns {string|undefined}
  */
 export const getDataAttribute = function (elem, attribute) {
@@ -158,8 +205,10 @@ export const getDataAttribute = function (elem, attribute) {
 };
 
 /**
+ * Helper that makes one don't have to do kebab case conversion oneself
+ *
  * @param {HTMLElement} elem
- * @param {string} attribute kebabCase
+ * @param {string} attribute Should be in kebab case
  * @param {string} value
  */
 export const setDataAttribute = function (elem, attribute, value) {
@@ -168,21 +217,23 @@ export const setDataAttribute = function (elem, attribute, value) {
 };
 
 /**
+ * Helper to easily create a new HTML element, with all that one would need for that
+ *
  * @param {string} tag
- * @param {string|string[]|AttributesList} [className]
+ * @param {string|string[]|{ [attributeName: string]: string }} [classNameOrAttributes]
  * @param {string} [text]
  * @returns {HTMLElement}
  */
-export const createElement = function (tag, className, text) {
+export const createElement = function (tag, classNameOrAttributes, text) {
   const newElem = document.createElement(tag);
 
-  if (className) {
-    if (typeof className === 'object' && !Array.isArray(className)) {
-      setAttributes(newElem, className);
+  if (classNameOrAttributes) {
+    if (typeof classNameOrAttributes === 'object' && !Array.isArray(classNameOrAttributes)) {
+      setAttributes(newElem, classNameOrAttributes);
     } else {
-      newElem.className = Array.isArray(className)
-        ? className.join(' ')
-        : className;
+      newElem.className = Array.isArray(classNameOrAttributes)
+        ? classNameOrAttributes.join(' ')
+        : classNameOrAttributes;
     }
   }
 
@@ -194,19 +245,25 @@ export const createElement = function (tag, className, text) {
 };
 
 /**
+ * Like {@link createElement}, but also appends the created element to a container
+ *
+ * Helpful when creating multiple elements within one another as one can then send the result of one as the container to the other.
+ *
  * @param {ElementContainer} elem
  * @param {string} tag
- * @param {string|string[]|AttributesList} [className]
+ * @param {string|string[]|{ [attributeName: string]: string }} [classNameOrAttributes]
  * @param {string} [text]
  * @returns {HTMLElement}
  */
-export const createChild = function (elem, tag, className, text) {
-  const child = createElement(tag, className, text);
+export const createChild = function (elem, tag, classNameOrAttributes, text) {
+  const child = createElement(tag, classNameOrAttributes, text);
   appendChild(elem, child);
   return child;
 };
 
 /**
+ * Iterates over the parents of a node and returns the first one that has the specified class name
+ *
  * @param {Node} elem
  * @param {string} className
  * @returns {HTMLElement|undefined}
@@ -221,9 +278,7 @@ export const closestByClass = function (elem, className) {
 };
 
 /**
- * Like $(), but only for class names + checks whether any context itself matches and then returns that directly
- *
- * Useful in connection with things like dynamic features
+ * Like {@link $}, but with class name rather than selector + also matches against the context itself, not just elements within it
  *
  * @param {string} className
  * @param {ElementContainer} [context]
@@ -235,9 +290,7 @@ export const elemByClass = function (className, context) {
 };
 
 /**
- * Like $$(), but only for class names + checks whether any context itself matches and then returns that directly
- *
- * Useful in connection with things like dynamic features
+ * Like {@link elemByClass} but replaces {@link $$} instead and either returns the context itself if it matches, or a list of matching elements within it
  *
  * @param {string} className
  * @param {ElementContainer} [context]

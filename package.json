@@ -16,13 +16,15 @@
     "check:dependency-check": "dependency-check *.js 'modules/**/*.js' --no-dev --detective precinct -i @types/*",
     "check:eslint": "eslint .",
     "check:installed-check": "installed-check -i eslint",
+    "check:readme": "documentation readme index.js -s \"Methods and types\" --shallow --markdown-toc-max-depth 2 --diff-only",
     "check:typescript": "tsc",
     "check": "run-s clean && run-p check:*",
     "clean:declarations": "rm -rf $(find . -maxdepth 2 -type f -name '*.d.ts' ! -name 'advanced-types.d.ts')",
     "clean": "run-p clean:*",
     "prepublishOnly": "run-s build",
     "test:tsd": "tsd",
-    "test": "run-s check build test:* clean"
+    "test": "run-s check build test:* clean",
+    "update-readme": "documentation readme index.js -s \"Methods and types\" --shallow --markdown-toc-max-depth 2"
   },
   "husky": {
     "hooks": {
@@ -42,6 +44,7 @@
     "@hdsydsvenskan/eslint-config-hds-browser": "^14.0.1",
     "@hdsydsvenskan/eslint-config-hds-core": "^2.0.1",
     "dependency-check": "^4.1.0",
+    "documentation": "^13.0.2",
     "eslint": "^6.7.2",
     "eslint-config-standard": "^14.1.0",
     "eslint-plugin-compat": "^3.3.0",
