@@ -1,0 +1,15 @@
+# Basic ones
+/node_modules
+
+# Please..
+.DS_Store
+npm-debug.log
+yarn-error.log
+
+# We're a library, so please, also no lock files
+/package-lock.json
+/yarn.lock
+
+# Library specific ones
+*.d.ts
+!/advanced-types.d.ts
