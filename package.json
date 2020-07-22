@@ -23,6 +23,7 @@
     "clean": "run-p clean:*",
     "prepublishOnly": "run-s build",
     "test:tsd": "tsd",
+    "test-checkless": "run-s build test:*",
     "test": "run-s check build test:* clean",
     "update-readme": "documentation readme index.js -s \"Methods and types\" --shallow --markdown-toc-max-depth 2"
   },
