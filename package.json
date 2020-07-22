@@ -37,9 +37,6 @@
   "sideEffects": false,
   "main": "index.js",
   "types": "index.d.ts",
-  "publishConfig": {
-    "access": "restricted"
-  },
   "devDependencies": {
     "@hdsydsvenskan/eslint-config-hds-browser": "^14.0.1",
     "@hdsydsvenskan/eslint-config-hds-core": "^2.0.1",
